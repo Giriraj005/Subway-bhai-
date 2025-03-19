@@ -14,11 +14,12 @@ let player, cursors, ground, obstacles, coins, scoreText;
 let score = 0;
 
 function preload() {
-    this.load.image('player', 'https://i.imgur.com/QM4cOZt.png');
-    this.load.image('ground', 'https://i.imgur.com/Sz4zsUj.png');
-    this.load.image('obstacle', 'https://i.imgur.com/3s3JbcQ.png');
-    this.load.image('coin', 'https://i.imgur.com/sMiyIVk.png');
+    this.load.image('player', 'https://i.imgur.com/5RHpVZB.png');   // Character
+    this.load.image('ground', 'https://i.imgur.com/J0a6gxX.png');   // Ground
+    this.load.image('obstacle', 'https://i.imgur.com/Z9b88zX.png'); // Obstacle
+    this.load.image('coin', 'https://i.imgur.com/9y5a69c.png');     // Coin
 }
+
 
 function create() {
     ground = this.physics.add.staticGroup();
