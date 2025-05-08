@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Lo Shu Numerology Grid</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      margin-top: 50px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 60px);
+      grid-template-rows: repeat(3, 60px);
+      gap: 2px;
+      border: 2px solid #000;
+    }
+
+    .cell {
+      border: 1px solid #000;
+      font-size: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 60px;
+      width: 60px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="grid" id="loshu-grid">
+  <div class="cell" id="cell-4"></div>
+  <div class="cell" id="cell-9"></div>
+  <div class="cell" id="cell-2"></div>
+  <div class="cell" id="cell-3"></div>
+  <div class="cell" id="cell-5"></div>
+  <div class="cell" id="cell-7"></div>
+  <div class="cell" id="cell-8"></div>
+  <div class="cell" id="cell-1"></div>
+  <div class="cell" id="cell-6"></div>
+</div>
+
+<script>
+  // Sample DOB: 11/10/2012 -> digits: 1,1,1,0,2,0,1,2
+  const dob = "111012";
+  const counts = {};
+
+  for (let digit of dob) {
+    if (digit === "0") continue;
+    counts[digit] = (counts[digit] || 0) + 1;
+  }
+
+  for (let i = 1; i <= 9; i++) {
+    const cell = document.getElementById("cell-" + i);
+    cell.innerText = counts[i] ? String(i).repeat(counts[i]) : "";
+  }
+</script>
+
+</body>
+</html>
