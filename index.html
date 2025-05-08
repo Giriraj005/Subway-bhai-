@@ -3,27 +3,83 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Numerology Finder</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>Lo Shu Grid Generator</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 40px;
+      background-color: #f0f0f0;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    input, button {
+      padding: 10px;
+      margin: 10px;
+      font-size: 16px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 60px);
+      grid-template-rows: repeat(3, 60px);
+      gap: 2px;
+      margin-top: 20px;
+    }
+
+    .cell {
+      width: 60px;
+      height: 60px;
+      background-color: #fff;
+      border: 2px solid #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 18px;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <h1 id="title">Numerology Finder</h1>
 
-    <label for="dob">Enter your Date of Birth:</label>
-    <input type="date" id="dob" />
+  <h1>🔢 Lo Shu Grid Generator</h1>
+  <label>Enter Date of Birth (YYYYMMDD):</label>
+  <input type="text" id="dobInput" placeholder="e.g. 19900112" />
+  <button onclick="generateGrid()">Generate Grid</button>
 
-    <label for="language">Choose Language:</label>
-    <select id="language">
-      <option value="en">English</option>
-      <option value="hi">हिन्दी</option>
-    </select>
-
-    <button onclick="calculate()">Find Your Number</button>
-
-    <div id="result"></div>
+  <div class="grid" id="loshuGrid">
+    <div class="cell" id="cell-4"></div>
+    <div class="cell" id="cell-9"></div>
+    <div class="cell" id="cell-2"></div>
+    <div class="cell" id="cell-3"></div>
+    <div class="cell" id="cell-5"></div>
+    <div class="cell" id="cell-7"></div>
+    <div class="cell" id="cell-8"></div>
+    <div class="cell" id="cell-1"></div>
+    <div class="cell" id="cell-6"></div>
   </div>
 
-  <script src="script.js"></script>
+  <script>
+    function generateGrid() {
+      const dob = document.getElementById("dobInput").value.replace(/\D/g, '');
+      const counts = {};
+
+      for (let digit of dob) {
+        if (digit === "0") continue;
+        counts[digit] = (counts[digit] || 0) + 1;
+      }
+
+      for (let i = 1; i <= 9; i++) {
+        const cell = document.getElementById("cell-" + i);
+        cell.textContent = counts[i] ? String(i).repeat(counts[i]) : "";
+      }
+    }
+  </script>
+
 </body>
 </html>
