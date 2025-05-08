@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Lo Shu Grid Generator</title>
   <style>
     body {
@@ -10,17 +9,13 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding-top: 40px;
-      background-color: #f0f0f0;
-    }
-
-    h1 {
-      margin-bottom: 20px;
+      padding-top: 30px;
+      background: #f9f9f9;
     }
 
     input, button {
       padding: 10px;
-      margin: 10px;
+      margin: 5px;
       font-size: 16px;
     }
 
@@ -43,14 +38,27 @@
       font-size: 18px;
       font-weight: bold;
     }
+
+    .section {
+      margin: 10px;
+    }
   </style>
 </head>
 <body>
 
   <h1>🔢 Lo Shu Grid Generator</h1>
-  <label>Enter Date of Birth (YYYYMMDD):</label>
-  <input type="text" id="dobInput" placeholder="e.g. 19900112" />
-  <button onclick="generateGrid()">Generate Grid</button>
+
+  <div class="section">
+    <label>🔹 Enter Date of Birth (YYYYMMDD):</label><br />
+    <input type="text" id="dobInput" placeholder="e.g. 19900112" />
+    <button onclick="generateGridFromDOB()">From DOB</button>
+  </div>
+
+  <div class="section">
+    <label>🔸 Enter Name (A–I only):</label><br />
+    <input type="text" id="nameInput" placeholder="e.g. AAMAN" />
+    <button onclick="generateGridFromName()">From Name</button>
+  </div>
 
   <div class="grid" id="loshuGrid">
     <div class="cell" id="cell-4"></div>
@@ -65,7 +73,13 @@
   </div>
 
   <script>
-    function generateGrid() {
+    function clearGrid() {
+      for (let i = 1; i <= 9; i++) {
+        document.getElementById("cell-" + i).textContent = "";
+      }
+    }
+
+    function generateGridFromDOB() {
       const dob = document.getElementById("dobInput").value.replace(/\D/g, '');
       const counts = {};
 
@@ -74,6 +88,29 @@
         counts[digit] = (counts[digit] || 0) + 1;
       }
 
+      clearGrid();
+      for (let i = 1; i <= 9; i++) {
+        const cell = document.getElementById("cell-" + i);
+        cell.textContent = counts[i] ? String(i).repeat(counts[i]) : "";
+      }
+    }
+
+    function generateGridFromName() {
+      const name = document.getElementById("nameInput").value.toUpperCase().replace(/[^A-I]/g, '');
+      const letterToNumber = {
+        'A': 1, 'B': 2, 'C': 3, 'D': 4, 'E': 5,
+        'F': 6, 'G': 7, 'H': 8, 'I': 9
+      };
+      const counts = {};
+
+      for (let char of name) {
+        const num = letterToNumber[char];
+        if (num) {
+          counts[num] = (counts[num] || 0) + 1;
+        }
+      }
+
+      clearGrid();
       for (let i = 1; i <= 9; i++) {
         const cell = document.getElementById("cell-" + i);
         cell.textContent = counts[i] ? String(i).repeat(counts[i]) : "";
