@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
   <meta charset="UTF-8">
-  <title>Numerology Calculator</title>
+  <title>अंक ज्योतिष कैलकुलेटर</title>
   <style>
     body {
       font-family: Arial;
@@ -22,6 +22,7 @@
       padding: 10px;
       background: #fff;
       font-size: 14px;
+      min-height: 70px;
     }
     input, select, button {
       padding: 8px;
@@ -35,14 +36,14 @@
 </head>
 <body>
 
-  <h2>🔢 Numerology Calculator</h2>
+  <h2>🔢 अंक ज्योतिष कैलकुलेटर</h2>
 
   <input type="date" id="dobInput">
   <select id="genderSelect">
-    <option value="male">Male</option>
-    <option value="female">Female</option>
+    <option value="male">पुरुष</option>
+    <option value="female">महिला</option>
   </select>
-  <button onclick="generateGridFromDOB()">Generate Grid</button>
+  <button onclick="generateGridFromDOB()">ग्रिड बनाएं</button>
 
   <div class="results">
     <div id="driverNumber"></div>
@@ -64,24 +65,23 @@
 
   <script>
     const descriptions = {
-      1: "Leader, ambitious",
-      2: "Peacemaker, sensitive",
-      3: "Creative, fun-loving",
-      4: "Stable, practical",
-      5: "Adventurous, flexible",
-      6: "Caring, responsible",
-      7: "Thinker, spiritual",
-      8: "Powerful, disciplined",
-      9: "Compassionate, emotional"
+      1: "नेता, महत्वाकांक्षी",
+      2: "मधुर, सहनशील",
+      3: "रचनात्मक, आनंदप्रिय",
+      4: "स्थिर, व्यावहारिक",
+      5: "साहसी, लचीला",
+      6: "देखभाल करने वाला, जिम्मेदार",
+      7: "विचारक, आध्यात्मिक",
+      8: "शक्तिशाली, अनुशासित",
+      9: "दयालु, भावुक"
     };
 
-    function fillGrid(counts) {
+    function fillGrid(repeats) {
       for (let i = 1; i <= 9; i++) {
         const cell = document.getElementById("cell-" + i);
-        const count = counts[i] || 0;
-        cell.innerHTML = `<div><b>${i}</b></div>
-                          <div>Count: ${count}</div>
-                          <div style="font-size:12px;">${descriptions[i]}</div>`;
+        const value = repeats[i] || "";
+        cell.innerHTML = `<div style="font-weight:bold;">${value}</div>
+                          <div style="font-size:12px; color: #666;">${descriptions[i]}</div>`;
       }
     }
 
@@ -107,7 +107,6 @@
       const year = parseInt(dob.split('-')[0]);
       const lastTwo = year % 100;
       let sum = lastTwo.toString().split('').reduce((a, b) => a + parseInt(b), 0);
-
       while (sum >= 10) {
         sum = sum.toString().split('').reduce((a, b) => a + parseInt(b), 0);
       }
@@ -128,24 +127,29 @@
 
     function generateGridFromDOB() {
       const dob = document.getElementById("dobInput").value;
-      const digits = dob.replace(/\D/g, '');
       const gender = document.getElementById("genderSelect").value;
-      const counts = {};
-
-      for (let i = 1; i <= 9; i++) counts[i] = 0;
-      for (let digit of digits) {
-        if (digit !== "0") counts[digit]++;
+      if (!dob) {
+        alert("कृपया जन्म तिथि चुनें।");
+        return;
       }
 
-      fillGrid(counts);
+      const digits = dob.replace(/\D/g, '').split('').filter(d => d !== "0");
+      const repeats = {};
+      for (let i = 1; i <= 9; i++) repeats[i] = "";
+
+      digits.forEach(d => {
+        repeats[d] += d;
+      });
+
+      fillGrid(repeats);
 
       const driver = getDriverNumber(dob);
       const conductor = getConductorNumber(dob);
       const kua = getKuaNumber(dob, gender);
 
-      document.getElementById("driverNumber").textContent = `🧭 Driver Number: ${driver}`;
-      document.getElementById("conductorNumber").textContent = `🔌 Conductor Number: ${conductor}`;
-      document.getElementById("kuaNumber").textContent = `🌐 KUA Number (${gender}): ${kua}`;
+      document.getElementById("driverNumber").textContent = `🧭 ड्राइवर नंबर: ${driver}`;
+      document.getElementById("conductorNumber").textContent = `🔌 कंडक्टर नंबर: ${conductor}`;
+      document.getElementById("kuaNumber").textContent = `🌐 कुआ नंबर (${gender === 'male' ? 'पुरुष' : 'महिला'}): ${kua}`;
     }
   </script>
 
