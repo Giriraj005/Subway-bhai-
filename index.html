@@ -1,63 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Lo Shu Grid Generator</title>
+  <meta charset="UTF-8">
+  <title>Numerology Calculator</title>
   <style>
     body {
-      font-family: sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding-top: 30px;
-      background: #f9f9f9;
+      font-family: Arial;
+      text-align: center;
+      background: #f4f4f4;
+      padding: 20px;
     }
-
-    input, button {
-      padding: 10px;
-      margin: 5px;
-      font-size: 16px;
-    }
-
     .grid {
       display: grid;
-      grid-template-columns: repeat(3, 60px);
-      grid-template-rows: repeat(3, 60px);
-      gap: 2px;
-      margin-top: 20px;
+      grid-template-columns: repeat(3, 1fr);
+      width: 300px;
+      margin: 20px auto;
+      gap: 5px;
     }
-
     .cell {
-      width: 60px;
-      height: 60px;
-      background-color: #fff;
-      border: 2px solid #000;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 18px;
-      font-weight: bold;
+      border: 1px solid #000;
+      padding: 10px;
+      background: #fff;
+      font-size: 14px;
     }
-
-    .section {
-      margin: 10px;
+    input, select, button {
+      padding: 8px;
+      margin: 5px;
+    }
+    .results {
+      margin-top: 20px;
+      font-size: 18px;
     }
   </style>
 </head>
 <body>
 
-  <h1>🔢 Lo Shu Grid Generator</h1>
+  <h2>🔢 Numerology Calculator</h2>
 
-  <div class="section">
-    <label>🔹 Enter Date of Birth (YYYYMMDD):</label><br />
-    <input type="text" id="dobInput" placeholder="e.g. 19900112" />
-    <button onclick="generateGridFromDOB()">From DOB</button>
-  </div>
+  <input type="date" id="dobInput">
+  <select id="genderSelect">
+    <option value="male">Male</option>
+    <option value="female">Female</option>
+  </select>
+  <button onclick="generateGridFromDOB()">Generate Grid</button>
 
-  <div class="section">
-    <label>🔸 Enter Name (A–I only):</label><br />
-    <input type="text" id="nameInput" placeholder="e.g. AAMAN" />
-    <button onclick="generateGridFromName()">From Name</button>
+  <div class="results">
+    <div id="driverNumber"></div>
+    <div id="conductorNumber"></div>
+    <div id="kuaNumber"></div>
   </div>
 
   <div class="grid" id="loshuGrid">
@@ -73,48 +63,89 @@
   </div>
 
   <script>
-    function clearGrid() {
+    const descriptions = {
+      1: "Leader, ambitious",
+      2: "Peacemaker, sensitive",
+      3: "Creative, fun-loving",
+      4: "Stable, practical",
+      5: "Adventurous, flexible",
+      6: "Caring, responsible",
+      7: "Thinker, spiritual",
+      8: "Powerful, disciplined",
+      9: "Compassionate, emotional"
+    };
+
+    function fillGrid(counts) {
       for (let i = 1; i <= 9; i++) {
-        document.getElementById("cell-" + i).textContent = "";
+        const cell = document.getElementById("cell-" + i);
+        const count = counts[i] || 0;
+        cell.innerHTML = `<div><b>${i}</b></div>
+                          <div>Count: ${count}</div>
+                          <div style="font-size:12px;">${descriptions[i]}</div>`;
       }
+    }
+
+    function getDriverNumber(dob) {
+      const day = parseInt(dob.split('-')[2]);
+      let sum = day;
+      while (sum >= 10) {
+        sum = sum.toString().split('').reduce((a, b) => a + parseInt(b), 0);
+      }
+      return sum;
+    }
+
+    function getConductorNumber(dob) {
+      const numbers = dob.replace(/\D/g, '').split('').map(Number);
+      let sum = numbers.reduce((acc, val) => acc + val, 0);
+      while (sum >= 10) {
+        sum = sum.toString().split('').reduce((a, b) => a + parseInt(b), 0);
+      }
+      return sum;
+    }
+
+    function getKuaNumber(dob, gender) {
+      const year = parseInt(dob.split('-')[0]);
+      const lastTwo = year % 100;
+      let sum = lastTwo.toString().split('').reduce((a, b) => a + parseInt(b), 0);
+
+      while (sum >= 10) {
+        sum = sum.toString().split('').reduce((a, b) => a + parseInt(b), 0);
+      }
+
+      let kua;
+      if (gender.toLowerCase() === 'male') {
+        kua = (year >= 2000) ? 9 - sum : 10 - sum;
+      } else {
+        kua = (year >= 2000) ? 6 + sum : 5 + sum;
+      }
+
+      while (kua >= 10) {
+        kua = kua.toString().split('').reduce((a, b) => a + parseInt(b), 0);
+      }
+
+      return kua;
     }
 
     function generateGridFromDOB() {
-      const dob = document.getElementById("dobInput").value.replace(/\D/g, '');
+      const dob = document.getElementById("dobInput").value;
+      const digits = dob.replace(/\D/g, '');
+      const gender = document.getElementById("genderSelect").value;
       const counts = {};
 
-      for (let digit of dob) {
-        if (digit === "0") continue;
-        counts[digit] = (counts[digit] || 0) + 1;
+      for (let i = 1; i <= 9; i++) counts[i] = 0;
+      for (let digit of digits) {
+        if (digit !== "0") counts[digit]++;
       }
 
-      clearGrid();
-      for (let i = 1; i <= 9; i++) {
-        const cell = document.getElementById("cell-" + i);
-        cell.textContent = counts[i] ? String(i).repeat(counts[i]) : "";
-      }
-    }
+      fillGrid(counts);
 
-    function generateGridFromName() {
-      const name = document.getElementById("nameInput").value.toUpperCase().replace(/[^A-I]/g, '');
-      const letterToNumber = {
-        'A': 1, 'B': 2, 'C': 3, 'D': 4, 'E': 5,
-        'F': 6, 'G': 7, 'H': 8, 'I': 9
-      };
-      const counts = {};
+      const driver = getDriverNumber(dob);
+      const conductor = getConductorNumber(dob);
+      const kua = getKuaNumber(dob, gender);
 
-      for (let char of name) {
-        const num = letterToNumber[char];
-        if (num) {
-          counts[num] = (counts[num] || 0) + 1;
-        }
-      }
-
-      clearGrid();
-      for (let i = 1; i <= 9; i++) {
-        const cell = document.getElementById("cell-" + i);
-        cell.textContent = counts[i] ? String(i).repeat(counts[i]) : "";
-      }
+      document.getElementById("driverNumber").textContent = `🧭 Driver Number: ${driver}`;
+      document.getElementById("conductorNumber").textContent = `🔌 Conductor Number: ${conductor}`;
+      document.getElementById("kuaNumber").textContent = `🌐 KUA Number (${gender}): ${kua}`;
     }
   </script>
 
